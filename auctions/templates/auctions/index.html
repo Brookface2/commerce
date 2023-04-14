@@ -1,0 +1,42 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <div>
+        {%for listing in listings%}
+        <div class="listing_page">
+            <a class="indv_listing" href="{% url 'listing' listing.id %}">
+            <div class="indv_listing">
+                {{ listing.title}}
+            </div>
+            {% if listing.image %}
+            <div class="indv_listing-image">
+               <img src={{ listing.image }} alt={{listing.description}} width='150px' height='225px'>
+            </div>
+            {% else %}
+            <div>
+                <img src="static/auctions/blankimage.jpg">
+            </div>
+            {%endif%}
+            <div class='indv_listing'>
+                Description: {{ listing.description }}
+            </div>
+            {%if listing.category %}
+            <div class="indv_listing">
+                {{listing.category}}
+            {% endif %}
+            </div>
+            <div class='indv_listing'>
+                Current bid: {{ listing.current_price }}
+            </div>
+            </a>
+
+        </div>
+    </div>
+        {%empty%}
+        <div class="message">
+            {{ message }}
+        {% endfor %}
+{% endblock %}

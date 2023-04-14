@@ -1,0 +1,35 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+<div class="listing-title">
+    {{page.title}}
+</div>
+<div class="listing-desc">
+    {{page.description}}
+</div>
+<div class="listing-image">
+    {%if page.image%}
+    <img src={{page.image}} alt={{page.description}} width="200px" height="275px">
+    {% endif %}
+</div>
+<div class="listing-desc">
+    {% if page.category%}
+        {{page.category}}
+    {% endif %}
+</div>
+<div class="listing-price">
+    Current Bid: £{{page.current_price}}
+</div>
+<form action="{% url 'listing' page.id %}" method="POST">
+    {%csrf_token%}
+    {{ form }}
+    <input class="btn btn-primary" type="submit" value="Bid">
+</form>
+<div class="message">
+    {% if message %}
+    {{ message }}
+    {% endif %}
+</div>
+
+{% endblock %}

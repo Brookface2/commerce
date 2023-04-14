@@ -1,0 +1,41 @@
+body {
+    padding: 10px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.message{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: large;
+}
+
+.listing_page{
+    margin: 5px;
+    background-color: rgb(233, 241, 248);
+}
+
+.indv_listing{
+    padding-left: 175px;
+    border-bottom: black;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.indv_listing-image{
+    height: 200px;
+    width: 150px;
+    padding: 3px;
+}
+.listing-title{
+    font: bold;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    padding-left: 10px;
+    font-size: x-large;
+}
+.listing-desc{
+    font: bold, italic;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    padding-left: 10px;
+    font-size:medium;
+}
+.listing-price{
+    padding-left: 10px;
+}
