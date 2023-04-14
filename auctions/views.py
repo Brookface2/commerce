@@ -71,6 +71,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
     
+    #creates a new listing
 def create(request):
     if request.method == "POST":
         title = request.POST["title"]
@@ -86,6 +87,8 @@ def create(request):
     else:
         return render(request, "auctions/createlisting.html")
     
+
+# gets the listing with it's ID
 def listing(request, listing_id):
     requested = Listing.objects.get(pk=listing_id)
     if request.method == "GET":
@@ -93,21 +96,21 @@ def listing(request, listing_id):
             'page':requested,
             'form':Bid_form()
         })
+    # if method is post - updates the bid
     elif request.method == "POST":
         form = Bid_form(request.POST)
         if form.is_valid():
             bid = form.cleaned_data["bid"]
             new_bid = Bids(current_bid=bid, bids_from_user=request.user)
             if requested.current_price.current_bid < new_bid.current_bid:
-                Bids.objects.update(current_bid=bid)
-                message = f"Bid Accepted!"
-                return HttpResponseRedirect(reverse("listing", args=(requested.id,)),{
-                    'title':requested,
-                    'page':requested,
-                    'form':Bid_form(),
-                    'message':message,
-                })
+                # Takes current bid for item and replaces it with the new bid
+                current_item_bid = requested.current_price.current_bid
+                test = Bids.objects.get(current_bid=current_item_bid)
+                test.current_bid = bid
+                test.save()
+                return HttpResponseRedirect(reverse("listing", args=(requested.id,)))
             else:
+                # if bid is lower than current bid message is printed to tell user
                 message = f"Your bid is less than current bid"
                 return render(request, "auctions/listing.html",{
                     'title':requested,
@@ -116,8 +119,6 @@ def listing(request, listing_id):
                     'message':message
                 })
         else:
-            bid = request.POST["bid"]
-            message=f" {bid} dont do no bids"
             return render(request, "auctions/listing.html",{
             'title':requested,
             'page':requested,
