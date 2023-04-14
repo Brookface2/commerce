@@ -101,12 +101,15 @@ def listing(request, listing_id):
         form = Bid_form(request.POST)
         if form.is_valid():
             bid = form.cleaned_data["bid"]
-            new_bid = Bids(current_bid=bid, bids_from_user=request.user)
-            if requested.current_price.current_bid < new_bid.current_bid:
-                # Takes current bid for item and replaces it with the new bid
-                current_item_bid = requested.current_price.current_bid
-                test = Bids.objects.get(current_bid=current_item_bid)
+            # gets current bid ID
+            current_bid_id = requested.current_price.id
+            # compares current bid against new bid 
+            if requested.current_price.current_bid < bid:
+                # creates new bid instance with current bid ID
+                test = Bids.objects.get(id=current_bid_id)
+                # assigns new bid to the curent bid
                 test.current_bid = bid
+                # saves new bid 
                 test.save()
                 return HttpResponseRedirect(reverse("listing", args=(requested.id,)))
             else:
