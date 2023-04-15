@@ -1,26 +1,34 @@
 {% extends "auctions/layout.html" %}
 
 {%block body %}
+
+    {%if message%}
+        {{message}}
+    {%endif%}
+
     <form action="{% url 'create' %}", method="post">
     {%csrf_token %}
 
-
     <div class="form-group">
-        <input autofocus class="form-control" type="text" name="title" placeholder="Title">
+       <div class="form-control"> Title:{{form.title}}</div>
     </div>
     <div class="form-group">
-        <input class="form-control" type="text" name="description" placeholder="Description">
+       Description:{{form.description}}
     </div>
     <div class="form-group">
-        <input class="form-control" type="int" name="bid" placeholder="Starting Bid">
+       <div class="form-control"> Starting Bid:{{form.start_bid}}</div>
     </div> 
     <div class="form-group">
-        <input class="form-control" type="url" name="URL" placeholder="URL">
+       <div class="form-control"> Image URL:{{form.url}} </div>
     </div>
     <div class="form-group">
-        <input class="form-control" type="text" name="category" placeholder="Category">
+        <div class="form-control"> Category: {{form.category}} </div>
+     </div>
+    <div class="form-group">
+       <div class="form-control"> End Date:{{form.end_date}} </div>
     </div>
     <input class="btn btn-primary" type="submit" value="Save">
-</form>
+
+    </form>
 
 {%endblock%}

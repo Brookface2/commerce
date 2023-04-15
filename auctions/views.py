@@ -8,15 +8,23 @@ from django import forms
 from .models import User, Listing, Bids, Comment
 
 class Bid_form(forms.Form):
-    bid = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput)
+    bid = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'name':'Bid'}))
 
+class Create_listing(forms.Form):
+    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'name':'Title'}))
+    description = forms.CharField(max_length=64, widget=forms.Textarea(attrs={'name':'Descriptions', 'rows':5, 'columns':5}))
+    start_bid = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'name':'Starting Bid'}))
+    url = forms.URLField(label='URL')
+    category = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'name':'Category'}))
+    end_date = forms.DateField(widget=forms.SelectDateWidget(), label='End Date')
 
 
 def index(request):
+        message = "No Active Listings!"
         return render(request, "auctions/index.html",{
-            'listings':Listing.objects.filter()
+            'listings':Listing.objects.filter(),
+            'message':message
         })
-
 
 
 
@@ -73,17 +81,30 @@ def register(request):
     
     #creates a new listing
 def create(request):
-    if request.method == "POST":
-        title = request.POST["title"]
-        description = request.POST["description"]
-        current_bid = request.POST["bid"]
-        link = request.POST["URL"]
-        category = request.POST["category"]
-        item_bid = Bids(current_bid=current_bid, bids_from_user=request.user)
-        item_bid.save()
-        listing = Listing(title = title, current_price=item_bid, description = description, category = category, image = link, user=request.user)
-        listing.save()
-        return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+    if request.method == "GET":
+        return render(request, "auctions/createlisting.html",{
+            'form': Create_listing()
+        })
+    elif request.method == "POST":
+        form = Create_listing(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"]
+            current_bid = form.cleaned_data["start_bid"]
+            link = form.cleaned_data["url"]
+            category = form.cleaned_data["category"]
+            end_date = form.cleaned_data["end_date"]
+            item_bid = Bids(current_bid=current_bid, bids_from_user=request.user)
+            item_bid.save()
+            listing = Listing(title = title, current_price=item_bid, description = description, category = category, image = link, user=request.user, end_date=end_date)
+            listing.save()
+            return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+        else:
+            message = "Form is not valid!"
+            return render(request, "auctions/createlisting.html",{
+                'message':message,
+                'form':Create_listing(request.POST)
+            })
     else:
         return render(request, "auctions/createlisting.html")
     
@@ -109,6 +130,7 @@ def listing(request, listing_id):
                 test = Bids.objects.get(id=current_bid_id)
                 # assigns new bid to the curent bid
                 test.current_bid = bid
+                test.bids_from_user = request.user
                 # saves new bid 
                 test.save()
                 return HttpResponseRedirect(reverse("listing", args=(requested.id,)))

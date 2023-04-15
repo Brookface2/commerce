@@ -21,6 +21,9 @@
 <div class="listing-price">
     Current Bid: £{{page.current_price.current_bid}}
 </div>
+<div class="listing-price">
+    Auction ends:  {{page.end_date}}
+</div>
 <form action="{% url 'listing' page.id %}" method="POST">
     {%csrf_token%}
     {{ form }}
