@@ -4,29 +4,32 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from datetime import datetime
+from dateutil.parser import parse
 
-from .models import User, Listing, Bids, Comment
+
+from .models import User, Listing, Bids, Comment, Watchlist
 
 class Bid_form(forms.Form):
     bid = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'name':'Bid'}))
 
 class Create_listing(forms.Form):
     title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'name':'Title'}))
-    description = forms.CharField(max_length=64, widget=forms.Textarea(attrs={'name':'Descriptions', 'rows':5, 'columns':5}))
+    description = forms.CharField(max_length=64, widget=forms.Textarea(attrs={'name':'Descriptions', 'rows':3, 'columns':4}))
     start_bid = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'name':'Starting Bid'}))
     url = forms.URLField(label='URL')
     category = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'name':'Category'}))
-    end_date = forms.DateField(widget=forms.SelectDateWidget(), label='End Date')
+    end_date = forms.SplitDateTimeField(widget=forms.SplitDateTimeWidget , label='End Date')
 
 
 def index(request):
         message = "No Active Listings!"
+        current_time = str(datetime.now(tz=None))
         return render(request, "auctions/index.html",{
             'listings':Listing.objects.filter(),
+            'current_time':current_time,
             'message':message
         })
-
-
 
 def login_view(request):
     if request.method == "POST":
@@ -83,7 +86,7 @@ def register(request):
 def create(request):
     if request.method == "GET":
         return render(request, "auctions/createlisting.html",{
-            'form': Create_listing()
+            'form': Create_listing(initial={"end_date":datetime.now})
         })
     elif request.method == "POST":
         form = Create_listing(request.POST)
@@ -96,7 +99,9 @@ def create(request):
             end_date = form.cleaned_data["end_date"]
             item_bid = Bids(current_bid=current_bid, bids_from_user=request.user)
             item_bid.save()
-            listing = Listing(title = title, current_price=item_bid, description = description, category = category, image = link, user=request.user, end_date=end_date)
+            item_watchlist = Watchlist(watchlist_user=request.user, on_watchlist=False)
+            item_watchlist.save()
+            listing = Listing(title = title, current_price=item_bid, description = description, category = category, image = link, user=request.user, end_date=end_date, on_watchlist=item_watchlist)
             listing.save()
             return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
         else:
@@ -111,6 +116,7 @@ def create(request):
 
 # gets the listing with it's ID
 def listing(request, listing_id):
+    now = datetime.now()
     requested = Listing.objects.get(pk=listing_id)
     if request.method == "GET":
         return render(request, "auctions/listing.html",{
@@ -150,3 +156,9 @@ def listing(request, listing_id):
             'form':Bid_form(),
             'message':message
         })
+
+def watchlisted(request, user):
+
+    return render(request, "auctions/watchlist.html",{
+        'user':user
+    })

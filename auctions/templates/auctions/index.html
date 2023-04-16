@@ -5,7 +5,7 @@
     <h2>Active Listings</h2>
 
     <div>
-        {%for listing in listings%}
+        {%for listing in listings%} 
         <div class="listing_page">
             <a class="indv_listing" href="{% url 'listing' listing.id %}">
             <div class="indv_listing">
@@ -17,7 +17,7 @@
             </div>
             {% else %}
             <div>
-                <img src="static/auctions/blankimage.jpg">
+                <img src="static/auctions/blankimage.jpg" alt="No image available" width"150px" height="225px">
             </div>
             {%endif%}
             <div class='indv_listing'>

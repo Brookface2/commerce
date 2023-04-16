@@ -23,12 +23,18 @@
 </div>
 <div class="listing-price">
     Auction ends:  {{page.end_date}}
+    {{listing.date}}
 </div>
 <form action="{% url 'listing' page.id %}" method="POST">
     {%csrf_token%}
     {{ form }}
     <input class="btn btn-primary" type="submit" value="Bid">
 </form>
+<div class="btn-outline-secondary">
+    <button type="button">
+        <a href="">Add to Watchlist</a>
+      </button>
+</div>
 <div class="message">
     {% if message %}
     {{ message }}
