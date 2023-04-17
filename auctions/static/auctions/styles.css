@@ -39,4 +39,19 @@ body {
 .listing-price{
     padding-left: 10px;
 }
+.comment-group{
+    border-width: 2px;
+    border-color: black;
+    background-color: rgb(146, 18, 18);
+    padding: 2px;
+    border: black;
+}
+.comment-item{
+    padding-bottom: 2px;
+    background-color: aquamarine;
+    font-family: 'Courier New', Courier, monospace;
+}
 
+.comment-date{
+    font-size: x-small;
+}

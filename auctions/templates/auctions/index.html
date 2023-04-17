@@ -5,7 +5,8 @@
     <h2>Active Listings</h2>
 
     <div>
-        {%for listing in listings%} 
+        {%for listing in listings%}
+        {%if listing.active%}
         <div class="listing_page">
             <a class="indv_listing" href="{% url 'listing' listing.id %}">
             <div class="indv_listing">
@@ -26,13 +27,15 @@
             {%if listing.category %}
             <div class="indv_listing">
                 {{listing.category}}
+                {% else %}
+                {{ message }}
             {% endif %}
             </div>
             <div class='indv_listing'>
                 Current bid: {{ listing.current_price }}
             </div>
             </a>
-
+            {%endif%}
         </div>
     </div>
         {%empty%}

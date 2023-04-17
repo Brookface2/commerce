@@ -21,15 +21,23 @@ class Create_listing(forms.Form):
     category = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'name':'Category'}))
     end_date = forms.SplitDateTimeField(widget=forms.SplitDateTimeWidget , label='End Date')
 
+class Comment_form(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea(attrs={'name':'Comment', 'rows':2, 'columns':4}), max_length=256)
 
 def index(request):
         message = "No Active Listings!"
-        current_time = str(datetime.now(tz=None))
-        return render(request, "auctions/index.html",{
-            'listings':Listing.objects.filter(),
-            'current_time':current_time,
-            'message':message
-        })
+        items = Listing.objects.filter()
+        for item in items:
+            if datetime.now().timestamp() < parse(str(item.end_date)).timestamp():
+                item.active = False
+                return render(request, "auctions/index.html",{
+                    'listings':Listing.objects.filter(active=True),
+                    'message':message
+                })
+            else:
+                return render(request, "auctions/index.html", {
+                    'message':message
+                })
 
 def login_view(request):
     if request.method == "POST":
@@ -116,15 +124,16 @@ def create(request):
 
 # gets the listing with it's ID
 def listing(request, listing_id):
-    now = datetime.now()
     requested = Listing.objects.get(pk=listing_id)
     if request.method == "GET":
         return render(request, "auctions/listing.html",{
             'page':requested,
-            'form':Bid_form()
+            'bid_form':Bid_form(),
+            'comment_form':Comment_form(),
+            'listing_comments':Comment.objects.filter(listing=listing_id).order_by('-date')
         })
     # if method is post - updates the bid
-    elif request.method == "POST":
+    elif request.method == "POST" and "bid" in request.POST:
         form = Bid_form(request.POST)
         if form.is_valid():
             bid = form.cleaned_data["bid"]
@@ -146,16 +155,32 @@ def listing(request, listing_id):
                 return render(request, "auctions/listing.html",{
                     'title':requested,
                     'page':requested,
-                    'form':Bid_form(request.POST),
-                    'message':message
+                    'bid_form':Bid_form(),
+                    'comment_form':Comment_form(),
+                    'message':message,
+                    'listing_comments':Comment.objects.filter(listing=listing_id).order_by('-date')
                 })
-        else:
+    elif request.method == "POST" and "comment" in request.POST:
+        listing=Listing.objects.get(pk=listing_id)
+        listing_comment = Comment.objects.filter(listing=listing_id)
+        comment = Comment_form(request.POST)
+        if comment.is_valid():
+            new_comment = comment.cleaned_data['comment']
+            save_comment = Comment(comment_for_user=request.user, comment=new_comment, listing=listing)
+            save_comment.save()
             return render(request, "auctions/listing.html",{
             'title':requested,
             'page':requested,
-            'form':Bid_form(),
-            'message':message
-        })
+            'bid_form':Bid_form(),
+            'comment_form':Comment_form(),
+            'listing_comments':Comment.objects.filter(listing=listing_id)
+            })
+            # else:
+            #      return HttpResponseRedirect(reverse("listing", args=(requested.id,)))
+        else:
+                return HttpResponseRedirect(reverse("listing", args=(requested.id,)))
+    else:
+        return HttpResponseRedirect(reverse("listing", args=(requested.id,)))
 
 def watchlisted(request, user):
 

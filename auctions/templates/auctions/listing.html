@@ -27,13 +27,31 @@
 </div>
 <form action="{% url 'listing' page.id %}" method="POST">
     {%csrf_token%}
-    {{ form }}
-    <input class="btn btn-primary" type="submit" value="Bid">
+    {{ bid_form }}
+    <input class="btn btn-primary" type="submit" name="bid_form" value="Bid">
 </form>
-<div class="btn-outline-secondary">
+<div class="btn-outline-light">
     <button type="button">
         <a href="">Add to Watchlist</a>
       </button>
+</div>
+<form action="{% url 'listing' page.id %}" method="POST">
+    {%csrf_token%}
+    {{ comment_form }}
+    <input class='btn btn-primary' type="submit" value="Save Comment">
+</form>
+<div class="listing_page" style=auctions/styles.css>
+    {%for listing_comment in listing_comments%}
+        <div class="listing-title">
+        {{listing_comment.comment_for_user}}
+        </div>
+        <div class="comment-item">
+        {{listing_comment.comment}}
+        </div>
+        <div class="listing_page">
+        {{listing_comment.date}}
+        </div>
+    {%endfor%}
 </div>
 <div class="message">
     {% if message %}
