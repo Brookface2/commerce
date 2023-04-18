@@ -25,31 +25,29 @@
     Auction ends:  {{page.end_date}}
     {{listing.date}}
 </div>
-<form action="{% url 'listing' page.id %}" method="POST">
+<div class="watchlist-btn">
+    <form action="{% url 'watchlist' %}" method="POST">
+        {% csrf_token %}
+        <input class="btn-outline-primary" type="submit" name="watchlist_btn" value="Add to Watchlist">
+    </form>
+</div>
+<form class="bid-form" action="{% url 'listing' page.id %}" method="POST">
     {%csrf_token%}
     {{ bid_form }}
     <input class="btn btn-primary" type="submit" name="bid_form" value="Bid">
 </form>
-<div class="btn-outline-light">
-    <button type="button">
-        <a href="">Add to Watchlist</a>
-      </button>
-</div>
 <form action="{% url 'listing' page.id %}" method="POST">
     {%csrf_token%}
     {{ comment_form }}
     <input class='btn btn-primary' type="submit" value="Save Comment">
 </form>
-<div class="listing_page" style=auctions/styles.css>
+<div class="comment-group" style=auctions/styles.css>
     {%for listing_comment in listing_comments%}
-        <div class="listing-title">
-        {{listing_comment.comment_for_user}}
-        </div>
         <div class="comment-item">
-        {{listing_comment.comment}}
-        </div>
-        <div class="listing_page">
-        {{listing_comment.date}}
+        {{listing_comment.comment_for_user}} - {{listing_comment.comment}}
+            <div class="comment-date">
+            {{listing_comment.date}}
+            </div>
         </div>
     {%endfor%}
 </div>

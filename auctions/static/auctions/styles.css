@@ -1,6 +1,7 @@
 body {
     padding: 10px;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background-color: rgb(240, 236, 230);
 }
 
 .message{
@@ -42,16 +43,23 @@ body {
 .comment-group{
     border-width: 2px;
     border-color: black;
-    background-color: rgb(146, 18, 18);
+    background-color: rgb(230, 234, 230);
     padding: 2px;
     border: black;
 }
 .comment-item{
     padding-bottom: 2px;
-    background-color: aquamarine;
     font-family: 'Courier New', Courier, monospace;
+    border: thin solid black;
+    margin: 2px;
 }
 
 .comment-date{
     font-size: x-small;
+}
+.watchlist-btn{
+    padding-left: 87px;
+}
+.bid-form{
+    padding-left: 52px;
 }

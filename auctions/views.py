@@ -182,8 +182,12 @@ def listing(request, listing_id):
     else:
         return HttpResponseRedirect(reverse("listing", args=(requested.id,)))
 
-def watchlisted(request, user):
-
+def watchlisted(request):
+    if request.method == "POST" and "watchlist" in request.POST:
+        watchlist=Listing.objects.get(pk=request.id)
+        watchlist.on_watchlist = True
+        watchlist.save()
+    listing = Listing.objects.filter()
     return render(request, "auctions/watchlist.html",{
-        'user':user
+        'on_watchlist':listing,
     })

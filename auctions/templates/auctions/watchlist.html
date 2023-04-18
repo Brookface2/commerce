@@ -1,0 +1,40 @@
+{% extends 'auctions/layout.html' %}
+{% block body %}
+    {% for item in on_watchlist%}
+        {% if item.on_watchlist %}
+        <div class="listing_page">
+            <a class="indv_listing" href="{% url 'listing' item.id %}">
+            <div class="indv_listing">
+                {{ item.title}}
+            </div>
+            {% if item.image %}
+            <div class="indv_listing-image">
+               <img src={{ item.image }} alt={{item.description}} width='150px' height='225px'>
+            </div>
+            {% else %}
+            <div>
+                <img src="static/auctions/blankimage.jpg" alt="No image available" width"150px" height="225px">
+            </div>
+            {%endif%}
+            <div class='indv_listing'>
+                Description: {{ item.description }}
+            </div>
+            {%if item.category %}
+            <div class="indv_listing">
+                {{item.category}}
+                {% else %}
+                {{ message }}
+            {% endif %}
+            </div>
+            <div class='indv_listing'>
+                Current bid: {{ item.current_price }}
+            </div>
+            </a>
+            {%endif%}
+        </div>
+    </div>
+        {%empty%}
+        <div class="message">
+            {{ message }}
+        {% endfor %}
+{% endblock %}
